@@ -1,4 +1,4 @@
-package com.paymybuddy.app.userconnection;
+package com.paymybuddy.app.user;
 
 import jakarta.persistence.Embeddable;
 

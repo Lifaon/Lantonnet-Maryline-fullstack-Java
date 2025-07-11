@@ -1,6 +1,6 @@
-package com.paymybuddy.app.userconnection;
+package com.paymybuddy.app.user;
 
-import com.paymybuddy.app.user.User;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -16,12 +16,14 @@ public class UserConnection {
     @ManyToOne
     @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_USER_CONNECTION_USER"))
     @OnDelete(action = OnDeleteAction.CASCADE)  // Cascade delete on user
+    @JsonBackReference
     private User user;
 
     @MapsId("connectionId")
     @ManyToOne
     @JoinColumn(name = "connection_id", foreignKey = @ForeignKey(name = "FK_USER_CONNECTION_CONNECTION"))
     @OnDelete(action = OnDeleteAction.CASCADE)  // Cascade delete on connection
+    @JsonBackReference
     private User connection;
 
     public UserConnection() {}

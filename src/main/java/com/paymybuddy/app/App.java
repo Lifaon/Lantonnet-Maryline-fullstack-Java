@@ -57,7 +57,7 @@ public class App {
             user.addConnection(user2);
             repository.save(user);
 
-            repository.delete(user2);
+//            repository.delete(user2);
         };
     }
 }

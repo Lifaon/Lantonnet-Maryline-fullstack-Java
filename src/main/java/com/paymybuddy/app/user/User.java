@@ -1,6 +1,6 @@
 package com.paymybuddy.app.user;
 
-import com.paymybuddy.app.userconnection.UserConnection;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
@@ -24,6 +24,7 @@ public class User {
     private String password;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonManagedReference
     private Set<UserConnection> connections = new HashSet<>();
 
     protected User() {}
