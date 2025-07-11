@@ -1,5 +1,6 @@
-package com.paymybuddy.app.models;
+package com.paymybuddy.app.user;
 
+import com.paymybuddy.app.userconnection.UserConnection;
 import jakarta.persistence.*;
 
 import java.util.HashSet;

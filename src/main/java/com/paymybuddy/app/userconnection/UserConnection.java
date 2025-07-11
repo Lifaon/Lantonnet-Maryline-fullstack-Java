@@ -1,8 +1,7 @@
-package com.paymybuddy.app.models;
+package com.paymybuddy.app.userconnection;
 
+import com.paymybuddy.app.user.User;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -31,5 +30,27 @@ public class UserConnection {
         id = new UserConnectionId(user.getId(), connection.getId());
         this.user = user;
         this.connection = connection;
+    }
+
+    public UserConnectionId getId() {
+        return id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+        id = new UserConnectionId(user.getId(), connection.getId());
+    }
+
+    public User getConnection() {
+        return connection;
+    }
+
+    public void setConnection(User connection) {
+        this.connection = connection;
+        id = new UserConnectionId(user.getId(), connection.getId());
     }
 }

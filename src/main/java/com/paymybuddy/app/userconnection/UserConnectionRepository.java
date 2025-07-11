@@ -1,7 +1,6 @@
-package com.paymybuddy.app.repositories;
+package com.paymybuddy.app.userconnection;
 
-import com.paymybuddy.app.models.User;
-import com.paymybuddy.app.models.UserConnection;
+import com.paymybuddy.app.user.User;
 import org.springframework.data.repository.CrudRepository;
 
 public interface UserConnectionRepository extends CrudRepository<UserConnection, Long> {

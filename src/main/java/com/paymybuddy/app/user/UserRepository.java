@@ -1,6 +1,5 @@
-package com.paymybuddy.app.repositories;
+package com.paymybuddy.app.user;
 
-import com.paymybuddy.app.models.User;
 import org.springframework.data.repository.CrudRepository;
 
 public interface UserRepository extends CrudRepository<User, Long> {

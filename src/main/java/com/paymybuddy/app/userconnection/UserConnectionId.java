@@ -1,12 +1,10 @@
-package com.paymybuddy.app.models;
+package com.paymybuddy.app.userconnection;
 
 import jakarta.persistence.Embeddable;
-import lombok.Data;
 
 import java.io.Serializable;
 
 @Embeddable
-@Data
 public class UserConnectionId implements Serializable {
 
     private Long userId;
@@ -43,5 +41,21 @@ public class UserConnectionId implements Serializable {
             result = 31 * result + connectionId.hashCode();
         }
         return result;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public Long getConnectionId() {
+        return connectionId;
+    }
+
+    public void setConnectionId(Long connectionId) {
+        this.connectionId = connectionId;
     }
 }
