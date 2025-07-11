@@ -1,6 +1,6 @@
 package com.paymybuddy.app.transaction;
 
-import com.paymybuddy.app.user.User;
+import com.paymybuddy.app.bankaccounts.BankAccount;
 import jakarta.persistence.*;
 
 import java.util.Date;
@@ -14,11 +14,11 @@ public class Transaction {
 
     @ManyToOne
     @JoinColumn(name = "sender_id", foreignKey = @ForeignKey(name = "FK_TRANSACTION_SENDER"))
-    private User sender;
+    private BankAccount sender;
 
     @ManyToOne
     @JoinColumn(name = "receiver_id", foreignKey = @ForeignKey(name = "FK_TRANSACTION_RECEIVER"))
-    private User receiver;
+    private BankAccount receiver;
 
     private String description;
     private Double amount;
@@ -26,7 +26,7 @@ public class Transaction {
 
     public Transaction() {}
 
-    public Transaction(Long id, User sender, User receiver, String description, Double amount, Date date) {
+    public Transaction(Long id, BankAccount sender, BankAccount receiver, String description, Double amount, Date date) {
         this.id = id;
         this.sender = sender;
         this.receiver = receiver;
@@ -43,19 +43,19 @@ public class Transaction {
         this.id = id;
     }
 
-    public User getSender() {
+    public BankAccount getSender() {
         return sender;
     }
 
-    public void setSender(User sender) {
+    public void setSender(BankAccount sender) {
         this.sender = sender;
     }
 
-    public User getReceiver() {
+    public BankAccount getReceiver() {
         return receiver;
     }
 
-    public void setReceiver(User receiver) {
+    public void setReceiver(BankAccount receiver) {
         this.receiver = receiver;
     }
 

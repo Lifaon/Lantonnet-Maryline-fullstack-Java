@@ -1,7 +1,10 @@
 package com.paymybuddy.app.bankaccounts;
 
+import com.paymybuddy.app.transaction.Transaction;
 import com.paymybuddy.app.user.User;
 import jakarta.persistence.*;
+
+import java.util.List;
 
 @Entity
 public class BankAccount {
@@ -17,6 +20,12 @@ public class BankAccount {
     private User user;
 
     private Double balance;
+
+    @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Transaction> sent;
+
+    @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Transaction> received;
 
     public BankAccount() {}
 
