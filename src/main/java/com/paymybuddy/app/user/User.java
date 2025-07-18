@@ -1,11 +1,11 @@
 package com.paymybuddy.app.user;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -17,7 +17,7 @@ import java.util.Set;
 @Table(name = "user")
 public class User {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(unique = true, nullable = false)
     private Long id;
 
@@ -30,9 +30,11 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JsonManagedReference
-    private Set<UserConnection> connections = new HashSet<>();
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<UserContact> following = new HashSet<>();
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "contact", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<UserContact> followers = new HashSet<>();
 
     protected User() {}
 
@@ -42,21 +44,51 @@ public class User {
         this.password = password;
     }
 
+    public User(Long id, String username, String email, String password, Set<UserContact> following, Set<UserContact> followers) {
+        this.id = id;
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.following = following;
+        this.followers = followers;
+    }
+
+    public UserDTO toDTO() {
+        return new UserDTO(
+                id,
+                username,
+                email,
+                following.stream().map(UserContact::getContact).map(User::getId).toList()
+        );
+    }
+
     @Override
     public String toString() {
-        return username;
+        return toDTO().toString();
     }
 
-    public Set<UserConnection> getConnections() {
-        return connections;
+    public Set<UserContact> getFollowing() {
+        return following;
     }
 
-    public void setConnections(Set<UserConnection> connections) {
-        this.connections = connections;
+    public void setFollowing(Set<UserContact> following) {
+        this.following = following;
     }
 
-    public void addConnection(User connection) {
-        connections.add(new UserConnection(this, connection));
+    public Set<UserContact> getFollowers() {
+        return followers;
+    }
+
+    public void setFollowers(Set<UserContact> followers) {
+        this.followers = followers;
+    }
+
+    public void addContact(User contact) {
+        following.add(new UserContact(this, contact));
+    }
+
+    public void removeContact(User contact) {
+        following.removeIf(userContact -> userContact.getContact().equals(contact));
     }
 
     public String getPassword() {

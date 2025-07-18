@@ -1,7 +1,7 @@
 package com.paymybuddy.app;
 
 import com.paymybuddy.app.user.User;
-import com.paymybuddy.app.user.UserRepository;
+import com.paymybuddy.app.user.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -18,27 +18,26 @@ public class App {
     }
 
     @Bean
-    public CommandLineRunner demo(UserRepository repository) {
+    public CommandLineRunner demo(UserService service) {
         return (args) -> {
-            // save a few users
-            repository.deleteAll();
+            service.deleteAllUsers();
 
-            repository.save(new User("Jack", "Jack@gmail.com", "password"));
-            repository.save(new User("Chloe", "Chloe@gmail.com", "password"));
-            repository.save(new User("Kim", "Kim@gmail.com", "password"));
-            repository.save(new User("David", "David@gmail.com", "password"));
-            repository.save(new User("Michelle", "Michelle@gmail.com", "password"));
+            service.addUser(new User("Jack", "Jack@gmail.com", "password"));
+            service.addUser(new User("Chloe", "Chloe@gmail.com", "password"));
+            service.addUser(new User("Kim", "Kim@gmail.com", "password"));
+            service.addUser(new User("David", "David@gmail.com", "password"));
+            service.addUser(new User("Michelle", "Michelle@gmail.com", "password"));
 
             // fetch all users
             log.info("Customers found with findAll():");
             log.info("-------------------------------");
-            repository.findAll().forEach(user -> {
+            service.getAllUsers().forEach(user -> {
                 log.info(user.toString());
             });
             log.info("");
 
             // fetch an individual user by username
-            User user = repository.findByUsername("David");
+            User user = service.getUserByUsername("David");
             log.info("User found with findByUsername(\"David\"):");
             log.info("--------------------------------");
             log.info(user.toString());
@@ -47,17 +46,24 @@ public class App {
             // fetch users by last name
             log.info("User found with findByEmail('Chloe@gmail.com'):");
             log.info("--------------------------------------------");
-            user = repository.findByEmail("Chloe@gmail.com");
+            user = service.getUserByEmail("Chloe@gmail.com");
             log.info(user.toString());
             log.info("");
 
-            // create connection then delete it
-            User user2 = repository.findByUsername("David");
+            // create contact then delete it
+            log.info("Create reciprocating contacts and delete one of the users");
+            log.info("--------------------------------------------");
+            User user2 = service.getUserByUsername("David");
+            user.addContact(user2);
+            service.updateUser(user);
+            user2.addContact(user);
+            service.updateUser(user2);
 
-            user.addConnection(user2);
-            repository.save(user);
+            log.info(user.toString());
+            log.info(user2.toString());
 
-//            repository.delete(user2);
+            service.deleteUser(user.getId());
+            log.info("");
         };
     }
 }
