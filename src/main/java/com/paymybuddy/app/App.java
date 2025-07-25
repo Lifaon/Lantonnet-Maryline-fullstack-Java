@@ -1,5 +1,6 @@
 package com.paymybuddy.app;
 
+import com.paymybuddy.app.bankaccounts.BankAccount;
 import com.paymybuddy.app.user.User;
 import com.paymybuddy.app.user.UserService;
 import org.slf4j.Logger;
@@ -55,17 +56,22 @@ public class App {
             log.info("--------------------------------------------");
             User user2 = service.getUserByUsername("David");
 
-            user.addRelation(user2);
+            user.createRelation(user2);
             service.updateUser(user);
 
-            user2.addRelation(user);
+            user2.createRelation(user);
             service.updateUser(user2);
 
             log.info(user.toString());
             log.info(user2.toString());
 
-            service.deleteUser(user.getId());
+            service.deleteUser(user2.getId());
             log.info("");
+
+            user = service.getUserByUsername("Chloe");
+
+            user.createBankAccount("iban1", 500.);
+            service.updateUser(user);
         };
     }
 }

@@ -46,6 +46,9 @@ public class UserService {
     }
 
     public void updateUser(User user) {
+        if (!userRepository.existsById(user.getId())) {
+            throw new UserNotFound();
+        }
         userRepository.save(user);
     }
 
@@ -56,8 +59,8 @@ public class UserService {
         user.getRelations().clear();
         userRepository.save(user);
 
-        List<UserRelation> relations = userRelationRepository.findAllByRelation(user);
-        relations.stream().map(UserRelation::getUser).forEach(owner -> owner.removeRelation(user));
+        List<UserRelation> relations = userRelationRepository.findAllByContact(user);
+        relations.stream().map(UserRelation::getUser).forEach(owner -> owner.deleteRelation(user));
         userRelationRepository.deleteAll(relations);
 
         userRepository.delete(user);

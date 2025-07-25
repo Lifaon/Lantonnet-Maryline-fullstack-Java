@@ -12,10 +12,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
 import java.util.List;
 
-@Entity
+@Entity(name = "bank_account")
+@Table(name = "bank_account")
 public class BankAccount {
 
     @Id
@@ -37,6 +39,12 @@ public class BankAccount {
     private List<Transaction> received;
 
     public BankAccount() {}
+
+    public BankAccount(String iban, User user, Double balance) {
+        this.iban = iban;
+        this.user = user;
+        this.balance = balance;
+    }
 
     public BankAccount(Long id, String iban, User user, Double balance) {
         this.id = id;

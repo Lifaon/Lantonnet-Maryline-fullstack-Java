@@ -24,14 +24,14 @@ public class UserRelation {
     private User user;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "relation_id", nullable = false)
-    private User relation;
+    @JoinColumn(name = "contact_id", nullable = false)
+    private User contact;
 
     public UserRelation() {}
 
-    public UserRelation(User user, User relation) {
+    public UserRelation(User user, User contact) {
         this.user = user;
-        this.relation = relation;
+        this.contact = contact;
     }
 
     public Long getId() {
@@ -50,12 +50,12 @@ public class UserRelation {
         this.user = user;
     }
 
-    public User getRelation() {
-        return relation;
+    public User getContact() {
+        return contact;
     }
 
-    public void setRelation(User relation) {
-        this.relation = relation;
+    public void setContact(User contact) {
+        this.contact = contact;
     }
 
     @Override
@@ -63,11 +63,11 @@ public class UserRelation {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         UserRelation that = (UserRelation) o;
-        return Objects.equals(getId(), that.getId()) && Objects.equals(getUser(), that.getUser()) && Objects.equals(getRelation(), that.getRelation());
+        return Objects.equals(getId(), that.getId()) && Objects.equals(getUser(), that.getUser()) && Objects.equals(getContact(), that.getContact());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getUser(), getRelation());
+        return Objects.hash(getId(), getUser(), getContact());
     }
 }

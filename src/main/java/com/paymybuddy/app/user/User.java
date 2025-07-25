@@ -1,5 +1,6 @@
 package com.paymybuddy.app.user;
 
+import com.paymybuddy.app.bankaccounts.BankAccount;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,7 +11,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity(name = "user")
@@ -33,6 +36,9 @@ public class User {
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<UserRelation> relations = new HashSet<>();
 
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BankAccount> bankAccounts = new ArrayList<>();
+
     protected User() {}
 
     public User(String username, String email, String password) {
@@ -41,12 +47,13 @@ public class User {
         this.password = password;
     }
 
-    public User(Long id, String username, String email, String password, Set<UserRelation> relations) {
+    public User(Long id, String username, String email, String password, Set<UserRelation> relations, List<BankAccount> bankAccounts) {
         this.id = id;
         this.username = username;
         this.email = email;
         this.password = password;
         this.relations = relations;
+        this.bankAccounts = bankAccounts;
     }
 
     public UserDTO toDTO() {
@@ -54,7 +61,7 @@ public class User {
                 id,
                 username,
                 email,
-                relations.stream().map(UserRelation::getRelation).map(User::getId).toList()
+                relations.stream().map(UserRelation::getContact).map(User::getId).toList()
         );
     }
 
@@ -71,12 +78,12 @@ public class User {
         this.relations = relations;
     }
 
-    public void addRelation(User relation) {
-        relations.add(new UserRelation(this, relation));
+    public void createRelation(User contact) {
+        relations.add(new UserRelation(this, contact));
     }
 
-    public void removeRelation(User relation) {
-        relations.removeIf(userRelation -> userRelation.getRelation().equals(relation));
+    public void deleteRelation(User contact) {
+        relations.removeIf(userRelation -> userRelation.getContact().equals(contact));
     }
 
     public String getPassword() {
@@ -109,5 +116,17 @@ public class User {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public List<BankAccount> getBankAccounts() {
+        return bankAccounts;
+    }
+
+    public void setBankAccounts(List<BankAccount> bankAccounts) {
+        this.bankAccounts = bankAccounts;
+    }
+
+    public void createBankAccount(String iban, Double balance) {
+        bankAccounts.add(new BankAccount(iban, this, balance));
     }
 }
