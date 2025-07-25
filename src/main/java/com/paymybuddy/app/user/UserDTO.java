@@ -7,12 +7,14 @@ public class UserDTO {
     private String username;
     private String email;
     private List<Long> relationIds;
+    private List<Long> bankAccountIds;
 
-    public UserDTO(Long id, String username, String email, List<Long> relationIds) {
+    public UserDTO(Long id, String username, String email, List<Long> relationIds, List<Long> bankAccountIds) {
         this.id = id;
         this.username = username;
         this.email = email;
         this.relationIds = relationIds;
+        this.bankAccountIds = bankAccountIds;
     }
 
     public Long getId() {
@@ -47,6 +49,14 @@ public class UserDTO {
         this.relationIds = relationIds;
     }
 
+    public List<Long> getBankAccountIds() {
+        return bankAccountIds;
+    }
+
+    public void setBankAccountIds(List<Long> bankAccountIds) {
+        this.bankAccountIds = bankAccountIds;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -54,6 +64,7 @@ public class UserDTO {
                 ", username='" + username + '\'' +
                 ", email='" + email + '\'' +
                 ", relationIds=" + relationIds +
+                ", bankAccountIds=" + bankAccountIds +
                 '}';
     }
 }

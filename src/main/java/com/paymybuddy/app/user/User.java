@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
+import javax.swing.plaf.basic.BasicBorders;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -61,7 +62,8 @@ public class User {
                 id,
                 username,
                 email,
-                relations.stream().map(UserRelation::getContact).map(User::getId).toList()
+                relations.stream().map(UserRelation::getContact).map(User::getId).toList(),
+                bankAccounts.stream().map(BankAccount::getId).toList()
         );
     }
 
