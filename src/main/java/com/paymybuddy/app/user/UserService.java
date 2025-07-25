@@ -12,9 +12,11 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final UserRelationRepository userRelationRepository;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, UserRelationRepository userRelationRepository) {
         this.userRepository = userRepository;
+        this.userRelationRepository = userRelationRepository;
     }
 
     public List<User> getAllUsers() {
@@ -51,17 +53,21 @@ public class UserService {
     public void deleteUser(Long id) {
         User user = userRepository.findById(id).orElseThrow(UserNotFound::new);
 
-        user.getFollowers().stream().map(UserContact::getUser).forEach(follower ->
-                follower.getFollowing().removeIf(e -> e.getContact().equals(user)));
+        user.getRelations().clear();
+        userRepository.save(user);
 
-        user.getFollowing().stream().map(UserContact::getContact).forEach(following ->
-                following.getFollowers().removeIf(e -> e.getUser().equals(user)));
+        List<UserRelation> relations = userRelationRepository.findAllByRelation(user);
+        relations.stream().map(UserRelation::getUser).forEach(owner -> owner.removeRelation(user));
+        userRelationRepository.deleteAll(relations);
 
         userRepository.delete(user);
     }
 
     @Transactional
     public void deleteAllUsers() {
+        List<User> users = userRepository.findAll();
+        users.forEach(user -> user.getRelations().clear());
+        userRepository.saveAll(users);
         userRepository.deleteAll();
     }
 }

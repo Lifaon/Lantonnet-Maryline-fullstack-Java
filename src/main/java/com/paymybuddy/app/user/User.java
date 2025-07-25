@@ -31,10 +31,7 @@ public class User {
     private String password;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<UserContact> following = new HashSet<>();
-
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "contact", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<UserContact> followers = new HashSet<>();
+    private Set<UserRelation> relations = new HashSet<>();
 
     protected User() {}
 
@@ -44,13 +41,12 @@ public class User {
         this.password = password;
     }
 
-    public User(Long id, String username, String email, String password, Set<UserContact> following, Set<UserContact> followers) {
+    public User(Long id, String username, String email, String password, Set<UserRelation> relations) {
         this.id = id;
         this.username = username;
         this.email = email;
         this.password = password;
-        this.following = following;
-        this.followers = followers;
+        this.relations = relations;
     }
 
     public UserDTO toDTO() {
@@ -58,7 +54,7 @@ public class User {
                 id,
                 username,
                 email,
-                following.stream().map(UserContact::getContact).map(User::getId).toList()
+                relations.stream().map(UserRelation::getRelation).map(User::getId).toList()
         );
     }
 
@@ -67,28 +63,20 @@ public class User {
         return toDTO().toString();
     }
 
-    public Set<UserContact> getFollowing() {
-        return following;
+    public Set<UserRelation> getRelations() {
+        return relations;
     }
 
-    public void setFollowing(Set<UserContact> following) {
-        this.following = following;
+    public void setRelations(Set<UserRelation> relations) {
+        this.relations = relations;
     }
 
-    public Set<UserContact> getFollowers() {
-        return followers;
+    public void addRelation(User relation) {
+        relations.add(new UserRelation(this, relation));
     }
 
-    public void setFollowers(Set<UserContact> followers) {
-        this.followers = followers;
-    }
-
-    public void addContact(User contact) {
-        following.add(new UserContact(this, contact));
-    }
-
-    public void removeContact(User contact) {
-        following.removeIf(userContact -> userContact.getContact().equals(contact));
+    public void removeRelation(User relation) {
+        relations.removeIf(userRelation -> userRelation.getRelation().equals(relation));
     }
 
     public String getPassword() {

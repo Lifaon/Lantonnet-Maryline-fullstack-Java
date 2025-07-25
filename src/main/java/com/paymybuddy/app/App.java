@@ -50,13 +50,15 @@ public class App {
             log.info(user.toString());
             log.info("");
 
-            // create contact then delete it
-            log.info("Create reciprocating contacts and delete one of the users");
+            // create relation then delete one of the users
+            log.info("Create reciprocating relations and delete one of the users");
             log.info("--------------------------------------------");
             User user2 = service.getUserByUsername("David");
-            user.addContact(user2);
+
+            user.addRelation(user2);
             service.updateUser(user);
-            user2.addContact(user);
+
+            user2.addRelation(user);
             service.updateUser(user2);
 
             log.info(user.toString());

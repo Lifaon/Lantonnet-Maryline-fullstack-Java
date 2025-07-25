@@ -11,9 +11,9 @@ import jakarta.persistence.Table;
 
 import java.util.Objects;
 
-@Entity(name = "user_contact")
-@Table(name = "user_contact")
-public class UserContact {
+@Entity(name = "user_relation")
+@Table(name = "user_relation")
+public class UserRelation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(unique = true, nullable = false)
@@ -24,14 +24,14 @@ public class UserContact {
     private User user;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "contact_id", nullable = false)
-    private User contact;
+    @JoinColumn(name = "relation_id", nullable = false)
+    private User relation;
 
-    public UserContact() {}
+    public UserRelation() {}
 
-    public UserContact(User user, User contact) {
+    public UserRelation(User user, User relation) {
         this.user = user;
-        this.contact = contact;
+        this.relation = relation;
     }
 
     public Long getId() {
@@ -50,24 +50,24 @@ public class UserContact {
         this.user = user;
     }
 
-    public User getContact() {
-        return contact;
+    public User getRelation() {
+        return relation;
     }
 
-    public void setContact(User contact) {
-        this.contact = contact;
+    public void setRelation(User relation) {
+        this.relation = relation;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        UserContact that = (UserContact) o;
-        return Objects.equals(getId(), that.getId()) && Objects.equals(getUser(), that.getUser()) && Objects.equals(getContact(), that.getContact());
+        UserRelation that = (UserRelation) o;
+        return Objects.equals(getId(), that.getId()) && Objects.equals(getUser(), that.getUser()) && Objects.equals(getRelation(), that.getRelation());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getUser(), getContact());
+        return Objects.hash(getId(), getUser(), getRelation());
     }
 }
