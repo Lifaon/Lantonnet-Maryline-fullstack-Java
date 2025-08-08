@@ -1,6 +1,5 @@
 package com.paymybuddy.app;
 
-import com.paymybuddy.app.bankaccounts.BankAccount;
 import com.paymybuddy.app.user.User;
 import com.paymybuddy.app.user.UserService;
 import org.slf4j.Logger;
@@ -23,11 +22,11 @@ public class App {
         return (args) -> {
             service.deleteAllUsers();
 
-            service.addUser(new User("Jack", "Jack@gmail.com", "password"));
-            service.addUser(new User("Chloe", "Chloe@gmail.com", "password"));
-            service.addUser(new User("Kim", "Kim@gmail.com", "password"));
-            service.addUser(new User("David", "David@gmail.com", "password"));
-            service.addUser(new User("Michelle", "Michelle@gmail.com", "password"));
+            service.createUser(new User("Jack", "Jack@gmail.com", "password"));
+            service.createUser(new User("Chloe", "Chloe@gmail.com", "password"));
+            service.createUser(new User("Kim", "Kim@gmail.com", "password"));
+            service.createUser(new User("David", "David@gmail.com", "password"));
+            service.createUser(new User("Michelle", "Michelle@gmail.com", "password"));
 
             // fetch all users
             log.info("Customers found with findAll():");

@@ -4,7 +4,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -28,7 +27,7 @@ public class RequestInterceptor implements HandlerInterceptor {
             logger.error(s_info);
     }
 
-    static private Logger _getLogger(@NotNull Object object) {
+    static private Logger _getLogger(Object object) {
         if (object instanceof HandlerMethod) {
             final Class<?> controllerClass = ((HandlerMethod) object).getBeanType();
             return LogManager.getLogger(controllerClass);
@@ -37,7 +36,7 @@ public class RequestInterceptor implements HandlerInterceptor {
     }
 
     @Override
-    public boolean preHandle(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull Object object) {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object object) {
 
         if (object instanceof HandlerMethod) {
             final String methodName = ((HandlerMethod) object).getMethod().getName();
@@ -52,7 +51,7 @@ public class RequestInterceptor implements HandlerInterceptor {
 //    }
 
     @Override
-    public void afterCompletion(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull Object object, Exception exception) {
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object object, Exception exception) {
 
         Logger logger = _getLogger(object);
 

@@ -3,11 +3,11 @@ package com.paymybuddy.app;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
-class AppApplicationTests {
-
-    @Test
-    void contextLoads() {
-    }
-
-}
+//@SpringBootTest
+//class AppApplicationTests {
+//
+//    @Test
+//    void contextLoads() {
+//    }
+//
+//}

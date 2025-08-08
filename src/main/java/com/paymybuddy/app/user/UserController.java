@@ -31,11 +31,6 @@ public class UserController {
         return userService.getUserById(id).toDTO();
     }
 
-    @PostMapping
-    public void addUser(@RequestBody User user) {
-        userService.addUser(user);
-    }
-
     @PutMapping("/{id}")
     public void updateUser(@PathVariable Long id, @RequestBody User user) {
         user.setId(id);
