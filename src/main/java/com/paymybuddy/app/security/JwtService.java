@@ -29,7 +29,7 @@ public class JwtService {
             KeyGenerator keyGen = KeyGenerator.getInstance("HmacSHA256");
             keyGen.init(256);
             key = keyGen.generateKey();
-            log.debug("Created JWT key: {}", Base64.getEncoder().encodeToString(key.getEncoded()));
+            log.debug("JWT key created: {}", Base64.getEncoder().encodeToString(key.getEncoded()));
         }
         catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
@@ -37,13 +37,15 @@ public class JwtService {
     }
 
     public String generateToken(UserDetails userDetails) {
-        return Jwts.builder()
+        String token = Jwts.builder()
                 .subject(userDetails.getUsername())
                 .claim("role", UserRole.getHighest(userDetails.getAuthorities()))
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
                 .signWith(key)
                 .compact();
+        log.debug("JWT created: {}", token);
+        return token;
     }
 
     private Claims extractAllClaims(String token) {
@@ -77,7 +79,13 @@ public class JwtService {
     }
 
     public Boolean validateToken(String token) {
-        return !isExpired(token);
+        try {
+            return !isExpired(token);
+        }
+        catch (Exception e) {
+            log.error("Invalid JWT: {}", e.getMessage());
+            return false;
+        }
     }
 
     public UserDetails getUserDetails(String token) {

@@ -2,6 +2,7 @@ package com.paymybuddy.app.security;
 
 import com.paymybuddy.app.user.User;
 import com.paymybuddy.app.user.UserService;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
@@ -69,11 +70,6 @@ public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
             userService.createUser(user);
         }
 
-        String jwt = jwtService.generateToken(user);
-
-        log.debug("JWT created: {}", jwt);
-
-        // TODO: create cookie
-        response.sendRedirect("/?token=" + jwt);
+        AuthController.createJWTCookie(response, jwtService.generateToken(user));
     }
 }
