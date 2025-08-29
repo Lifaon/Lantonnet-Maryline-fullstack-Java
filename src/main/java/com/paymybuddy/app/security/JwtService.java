@@ -6,13 +6,13 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
-import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
+import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.Set;
 import java.util.function.Function;
@@ -24,19 +24,28 @@ public class JwtService {
 
     private final SecretKey key;
 
-    public JwtService() {
-        try {
-            KeyGenerator keyGen = KeyGenerator.getInstance("HmacSHA256");
-            keyGen.init(256);
-            key = keyGen.generateKey();
-            log.debug("JWT key created: {}", Base64.getEncoder().encodeToString(key.getEncoded()));
-        }
-        catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
+//    public JwtService() {
+//        try {
+//            KeyGenerator keyGen = KeyGenerator.getInstance("HmacSHA256");
+//            keyGen.init(256);
+//            key = keyGen.generateKey();
+//            log.debug("JWT key created: {}", Base64.getEncoder().encodeToString(key.getEncoded()));
+//        }
+//        catch (NoSuchAlgorithmException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
+
+    public JwtService(@Value("${app.security.jwt-secret}") String secret) {
+        key = new SecretKeySpec(
+                secret.getBytes(StandardCharsets.UTF_8),
+                "HmacSHA256"
+        );
+        log.debug("JWT key created from secret string");
     }
 
     public String generateToken(UserDetails userDetails) {
+        log.debug("Generating JWT token");
         String token = Jwts.builder()
                 .subject(userDetails.getUsername())
                 .claim("role", UserRole.getHighest(userDetails.getAuthorities()))
@@ -61,7 +70,7 @@ public class JwtService {
         return claimsResolver.apply(claims);
     }
 
-    public String extractUsername(String token) {
+    public String extractSubject(String token) {
         return getClaim(token, Claims::getSubject);
     }
 
@@ -80,7 +89,11 @@ public class JwtService {
 
     public Boolean validateToken(String token) {
         try {
-            return !isExpired(token);
+            if (isExpired(token)) {
+                log.debug("JWT token expired");
+                return false;
+            }
+            return true;
         }
         catch (Exception e) {
             log.error("Invalid JWT: {}", e.getMessage());
@@ -90,8 +103,8 @@ public class JwtService {
 
     public UserDetails getUserDetails(String token) {
         User user = new User();
-        user.setUsername(extractUsername(token));
+        user.setEmail(extractSubject(token));
         user.setRoles(extractRoles(token));
-        return user;
+        return user.toUserDetails();
     }
 }

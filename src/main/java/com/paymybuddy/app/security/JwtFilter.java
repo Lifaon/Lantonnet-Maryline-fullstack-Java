@@ -1,6 +1,5 @@
 package com.paymybuddy.app.security;
 
-import com.paymybuddy.app.user.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;

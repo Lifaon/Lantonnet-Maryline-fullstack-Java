@@ -29,7 +29,7 @@ public class  SecurityConfiguration {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/auth/**")
+                        .requestMatchers("/auth/**", "/css/**", "/js/**", "/images/**", "/fonts/**")
                         .permitAll()
                         .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())

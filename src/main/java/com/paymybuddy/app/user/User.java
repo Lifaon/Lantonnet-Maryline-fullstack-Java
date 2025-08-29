@@ -15,12 +15,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -28,17 +26,17 @@ import java.util.stream.Collectors;
 
 @Entity(name = "user")
 @Table(name = "user")
-public class User implements UserDetails {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(unique = true, nullable = false)
     private Long id;
 
+    @Column(unique = true, nullable = false)
+    private String email;
+
     @Column(nullable = false)
     private String username;
-
-    @Column(unique = true)
-    private String email;
 
     @Column(nullable = false)
     private String provider;
@@ -97,6 +95,16 @@ public class User implements UserDetails {
         );
     }
 
+    public UserDetails toUserDetails() {
+        return org.springframework.security.core.userdetails.User.builder()
+                .username(email)
+                .password(password != null ? password : "")
+                .authorities(roles.stream()
+                        .map(role -> new SimpleGrantedAuthority(role.getAuthority()))
+                        .collect(Collectors.toSet()))
+                .build();
+    }
+
     @Override
     public String toString() {
         return toDTO().toString();
@@ -118,14 +126,6 @@ public class User implements UserDetails {
         relations.removeIf(userRelation -> userRelation.getContact().equals(contact));
     }
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return roles.stream()
-                .map(role -> new SimpleGrantedAuthority(role.getAuthority()))
-                .collect(Collectors.toSet());
-    }
-
-    @Override
     public String getPassword() {
         return password;
     }
@@ -142,7 +142,6 @@ public class User implements UserDetails {
         this.email = email;
     }
 
-    @Override
     public String getUsername() {
         return username;
     }

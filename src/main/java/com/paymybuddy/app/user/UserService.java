@@ -8,6 +8,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +21,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -51,6 +54,22 @@ public class UserService {
         public UserNotFound() {
             super(HttpStatus.NOT_FOUND, "User not found");
         }
+
+    }
+
+    public String verify(UserDetails user) {
+        Authentication authentication = context.getBean(AuthenticationManager.class).authenticate(
+                new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
+        if (!authentication.isAuthenticated()) {
+            // TODO: throw
+            return "Failure";
+        }
+        return jwtService.generateToken(user);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        return getUserByEmail(email).toUserDetails();
     }
 
     public User getUserById(Long id) {
@@ -71,16 +90,6 @@ public class UserService {
         }
         repo.save(user);
         log.debug("User {} created", user.getId());
-    }
-
-    public String verify(User user) {
-        Authentication authentication = context.getBean(AuthenticationManager.class).authenticate(
-                new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
-        if (!authentication.isAuthenticated()) {
-            // TODO: throw
-            return "Failure";
-        }
-        return jwtService.generateToken(user);
     }
 
     public void updateUser(User user) {

@@ -40,7 +40,7 @@ public class RequestInterceptor implements HandlerInterceptor {
 
         if (object instanceof HandlerMethod) {
             final String methodName = ((HandlerMethod) object).getMethod().getName();
-            _getLogger(object).debug("Call '{}()'", methodName);
+            _getLogger(object).debug("Call '{}()' ({})", methodName, request.getMethod());
         }
         return true;
     }
