@@ -29,19 +29,24 @@ public class Transaction {
     @JoinColumn(name = "receiver_id", foreignKey = @ForeignKey(name = "FK_TRANSACTION_RECEIVER"))
     private BankAccount receiver;
 
+    private Double amountSent;
+    private Double amountReceived;
     private String description;
-    private Double amount;
+    private String currency = "€";
     private Date date;
 
-    public Transaction() {}
+    public Transaction() {
+    }
 
-    public Transaction(Long id, BankAccount sender, BankAccount receiver, String description, Double amount, Date date) {
+    public Transaction(Long id, BankAccount sender, BankAccount receiver, Double amountSent, Double amountReceived, String description, Date date, String currency) {
         this.id = id;
         this.sender = sender;
         this.receiver = receiver;
+        this.amountSent = amountSent;
+        this.amountReceived = amountReceived;
         this.description = description;
-        this.amount = amount;
         this.date = date;
+        this.currency = currency;
     }
 
     public Long getId() {
@@ -68,20 +73,44 @@ public class Transaction {
         this.receiver = receiver;
     }
 
+    public boolean isSender(Long id) {
+        return sender.getId().equals(id);
+    }
+
+    private String _getFormattedAmount(Double amount) {
+        return String.format("%.2f %s", amount, currency);
+    }
+
+    public String getFormattedAmountSent() {
+        return "-" + _getFormattedAmount(amountSent);
+    }
+
+    public String getFormattedAmountReceived() {
+        return "+" + _getFormattedAmount(amountReceived);
+    }
+
+    public Double getAmountSent() {
+        return amountSent;
+    }
+
+    public void setAmountSent(Double amount) {
+        amountSent = amount;
+    }
+
+    public Double getAmountReceived() {
+        return amountReceived;
+    }
+
+    public void setAmountReceived(Double amount) {
+        amountReceived = amount;
+    }
+
     public String getDescription() {
         return description;
     }
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public Double getAmount() {
-        return amount;
-    }
-
-    public void setAmount(Double amount) {
-        this.amount = amount;
     }
 
     public Date getDate() {
@@ -91,4 +120,13 @@ public class Transaction {
     public void setDate(Date date) {
         this.date = date;
     }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
+
 }

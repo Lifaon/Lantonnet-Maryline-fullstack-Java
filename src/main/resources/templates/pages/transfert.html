@@ -1,0 +1,72 @@
+
+<!--    Add Header -->
+
+<div xmlns:th="http://www.thymeleaf.org" th:fragment="content">
+
+    <!-- New transaction -->
+
+    <!--/*@thymesVar id="transactionForm" type="com.paymybuddy.app.transaction.TransactionForm"*/-->
+    <div class="row">
+        <form th:action="@{/transfert}" th:object="${transactionForm}" method="post">
+            <div class="inputs line">
+                <div>
+                    <select th:field="*{relation}" aria-label="Relation">
+                        <option value="" selected disabled>Sélectionner une relation</option>
+                        <option th:each="name : ${relations}" th:value="${name}" th:text="${name}"></option>
+                    </select>
+                    <div th:if="${#fields.hasErrors('*{relation}')}" th:errors="*{relation}" class="error"></div>
+                </div>
+
+                <div>
+                    <input th:field="*{description}" aria-label="description" type="text" placeholder="Description"/>
+                    <div th:if="${#fields.hasErrors('*{description}')}" th:errors="*{description}" class="error"></div>
+                </div>
+
+                <div>
+                    <input th:field="*{amount}" class="small-input" aria-label="amount" type="number" placeholder="Montant" data-type="currency" min="1.00" step="any"/>
+                    <div th:if="${#fields.hasErrors('*{amount}')}" th:errors="*{amount}" class="error"></div>
+                </div>
+
+                <!--/*@thymesVar id="errorMessage" type="java.lang.String"*/-->
+                <div th:if="${errorMessage != null}">
+                    <div th:text="${errorMessage}" class="error"></div>
+                </div>
+
+                <div>
+                    <button type="submit" class="button">Payer</button>
+                </div>
+            </div>
+        </form>
+        <!--/*@thymesVar id="successMessage" type="java.lang.String"*/-->
+        <div th:if="${successMessage != null}">
+            <div th:text="${successMessage}" class="success"></div>
+        </div>
+    </div>
+
+    <!-- Latest transactions -->
+    <div class="row">
+        <table>
+            <thead>
+                <tr>
+                    <th>Mes transactions</th>
+                </tr>
+                <tr>
+                    <th>Contact</th>
+                    <th>Description</th>
+                    <th class="last-td">Montant</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!--/*@thymesVar id="transaction" type="com.paymybuddy.app.transaction.Transaction"*/-->
+                <!--/*@thymesVar id="bankAccountId" type="java.lang.Long"*/-->
+                <tr th:each="transaction : ${latestTransactions}">
+                    <td th:text="${transaction.isSender(bankAccountId) ? transaction.receiver.user.username : transaction.sender.user.username}"></td>
+                    <td th:text="${transaction.description}"></td>
+                    <td th:if="${transaction.isSender(bankAccountId)}" class="last-td sentAmount" th:text="${transaction.formattedAmountSent}"></td>
+                    <td th:if="${!transaction.isSender(bankAccountId)}" class="last-td receivedAmount" th:text="${transaction.formattedAmountReceived}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>

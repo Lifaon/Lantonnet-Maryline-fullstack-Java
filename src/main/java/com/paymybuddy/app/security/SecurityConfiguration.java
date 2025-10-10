@@ -33,7 +33,9 @@ public class  SecurityConfiguration {
                         .permitAll()
                         .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())
-                .oauth2Login(oauth2 -> oauth2.successHandler(successHandler))
+                .oauth2Login(oauth2 -> oauth2
+                        .successHandler(successHandler)
+                        .loginPage("/auth/login"))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

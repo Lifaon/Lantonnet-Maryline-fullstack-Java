@@ -14,6 +14,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -59,8 +60,8 @@ public class User {
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<UserRelation> relations = new HashSet<>();
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<BankAccount> bankAccounts = new ArrayList<>();
+    @OneToOne(fetch = FetchType.EAGER, mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private BankAccount bankAccount;
 
     public User() {}
 
@@ -71,7 +72,7 @@ public class User {
         this.password = password;
     }
 
-    public User(Long id, String username, String email, String provider, String providerId, String password, Set<UserRole> roles, Set<UserRelation> relations, List<BankAccount> bankAccounts) {
+    public User(Long id, String username, String email, String provider, String providerId, String password, Set<UserRole> roles, Set<UserRelation> relations, BankAccount bankAccount) {
         this.id = id;
         this.username = username;
         this.email = email;
@@ -80,7 +81,7 @@ public class User {
         this.password = password;
         this.roles = roles;
         this.relations = relations;
-        this.bankAccounts = bankAccounts;
+        this.bankAccount = bankAccount;
     }
 
     public UserDTO toDTO() {
@@ -91,13 +92,13 @@ public class User {
                 roles,
                 provider,
                 relations.stream().map(UserRelation::getContact).map(User::getId).toList(),
-                bankAccounts.stream().map(BankAccount::getId).toList()
+                bankAccount == null ? null : bankAccount.getId()
         );
     }
 
     public UserDetails toUserDetails() {
         return org.springframework.security.core.userdetails.User.builder()
-                .username(email)
+                .username(id.toString())
                 .password(password != null ? password : "")
                 .authorities(roles.stream()
                         .map(role -> new SimpleGrantedAuthority(role.getAuthority()))
@@ -158,16 +159,12 @@ public class User {
         this.id = id;
     }
 
-    public List<BankAccount> getBankAccounts() {
-        return bankAccounts;
+    public BankAccount getBankAccount() {
+        return bankAccount;
     }
 
-    public void setBankAccounts(List<BankAccount> bankAccounts) {
-        this.bankAccounts = bankAccounts;
-    }
-
-    public void createBankAccount(String iban, Double balance) {
-        bankAccounts.add(new BankAccount(iban, this, balance));
+    public void setBankAccount(BankAccount bankAccount) {
+        this.bankAccount = bankAccount;
     }
 
     public String getProvider() {

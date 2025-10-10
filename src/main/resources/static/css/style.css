@@ -25,18 +25,22 @@ body {
 .row {
     display: flex;
     flex-flow: column wrap;
-    width: auto;
-    background-color:rgba(217, 217, 217, 0);
-    filter:drop-shadow(0px 4px 4px rgba(0,0,0,0.25));
-    border:1px solid #000000;
     padding: 80px;
     gap: 40px;
 }
 
-.row * {
-    display: flex;
-    flex-flow: column wrap;
+.rectangle {
+    width: auto;
+    background-color:rgba(217, 217, 217, 0);
+    filter:drop-shadow(0px 4px 4px rgba(0,0,0,0.25));
+    border:1px solid #000000;
+
 }
+
+/*.row * {*/
+/*    display: flex;*/
+/*    flex-flow: column wrap;*/
+/*}*/
 
 button {
     cursor: pointer;
@@ -72,17 +76,21 @@ form {
     gap: 10px;
 }
 
-input {
+input, select, option {
     background-color:#ffffff;
-    width: 400px;
+    min-width: 400px;
     filter:drop-shadow(0px 1px 2px rgba(0,0,0,0.05));
     border-radius:8px;
+    border: 1px solid lightgray;
     padding: 12px 16px;
-    border-style:hidden;
     outline:none;
-    ::placeholder {
+    ::placeholder, :disabled {
         color:#828282;
     }
+}
+
+.small-input {
+    width: 120px;
 }
 
 .error, .error * {
@@ -106,4 +114,52 @@ input {
     border-radius:100%;
     border:hidden;
     background:inherit;
+}
+
+.line {
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.line * {
+    min-width: 20px;
+}
+
+table {
+    border: 1px solid lightgrey;
+    border-radius:8px;
+    padding: 0 20px;
+    width: 100%;
+    filter:drop-shadow(0px 1px 2px rgba(0,0,0,0.05));
+}
+
+td {
+    border-top: 1px solid lightgray;
+}
+
+tr {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+}
+
+td, th {
+    text-align: start;
+    width: 100%;
+    padding: 12px 0;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: space-between;
+}
+
+.last-td, .last-td * {
+    text-align: end;
+}
+
+.receivedAmount {
+    color: green;
+}
+
+.sentAmount {
+    color: red;
 }

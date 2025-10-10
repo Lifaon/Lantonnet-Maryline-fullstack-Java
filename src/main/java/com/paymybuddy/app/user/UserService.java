@@ -1,5 +1,6 @@
 package com.paymybuddy.app.user;
 
+import com.paymybuddy.app.bankaccounts.BankAccount;
 import com.paymybuddy.app.security.JwtService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -57,14 +59,19 @@ public class UserService implements UserDetailsService {
 
     }
 
-    public String verify(UserDetails user) {
+    public String verify(UserDetails userDetails) {
         Authentication authentication = context.getBean(AuthenticationManager.class).authenticate(
-                new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
-        if (!authentication.isAuthenticated()) {
-            // TODO: throw
-            return "Failure";
+                new UsernamePasswordAuthenticationToken(userDetails.getUsername(), userDetails.getPassword()));
+        // Generate new details from logged user, to specify the id instead of the username
+        long id;
+        try {
+            id = Long.parseLong(authentication.getName());
         }
-        return jwtService.generateToken(user);
+        catch (NumberFormatException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+        User user = repo.findById(id).orElseThrow(UserNotFound::new);
+        return jwtService.generateToken(user.toUserDetails());
     }
 
     @Override
@@ -84,9 +91,21 @@ public class UserService implements UserDetailsService {
         return repo.findByEmail(email).orElseThrow(UserNotFound::new);
     }
 
+    public User getLoggedUser() {
+        return repo.findById(JwtService.getLoggedUserId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED));
+    }
+
+    public List<UserRelation> getLoggedUserRelations() {
+        return relationRepo.findAllByUserId(JwtService.getLoggedUserId());
+    }
+
     public void createUser(User user) {
         if (user.getPassword() != null) {
             user.setPassword(encoder.encode(user.getPassword()));
+        }
+        if (user.getBankAccount() == null) {
+            user.setBankAccount(new BankAccount(user, 0.));
         }
         repo.save(user);
         log.debug("User {} created", user.getId());

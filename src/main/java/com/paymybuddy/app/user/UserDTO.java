@@ -10,16 +10,16 @@ public class UserDTO {
     private Set<UserRole> roles;
     private String provider;
     private List<Long> relationIds;
-    private List<Long> bankAccountIds;
+    private Long bankAccountId;
 
-    public UserDTO(Long id, String username, String email, Set<UserRole> roles, String provider, List<Long> relationIds, List<Long> bankAccountIds) {
+    public UserDTO(Long id, String username, String email, Set<UserRole> roles, String provider, List<Long> relationIds, Long bankAccountId) {
         this.id = id;
         this.username = username;
         this.email = email;
         this.roles = roles;
         this.provider = provider;
         this.relationIds = relationIds;
-        this.bankAccountIds = bankAccountIds;
+        this.bankAccountId = bankAccountId;
     }
 
     public Long getId() {
@@ -54,12 +54,12 @@ public class UserDTO {
         this.relationIds = relationIds;
     }
 
-    public List<Long> getBankAccountIds() {
-        return bankAccountIds;
+    public Long getBankAccountIds() {
+        return bankAccountId;
     }
 
-    public void setBankAccountIds(List<Long> bankAccountIds) {
-        this.bankAccountIds = bankAccountIds;
+    public void setBankAccountIds(Long bankAccountId) {
+        this.bankAccountId = bankAccountId;
     }
 
     @Override
@@ -71,7 +71,7 @@ public class UserDTO {
                 ", roles='" + roles + '\'' +
                 ", provider='" + provider + '\'' +
                 ", relationIds=" + relationIds +
-                ", bankAccountIds=" + bankAccountIds +
+                ", bankAccountId=" + bankAccountId +
                 '}';
     }
 

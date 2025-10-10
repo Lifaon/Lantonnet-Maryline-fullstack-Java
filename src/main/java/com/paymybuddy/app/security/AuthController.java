@@ -33,10 +33,16 @@ public class AuthController {
         cookie.setHttpOnly(true);
         cookie.setSecure(true);
         cookie.setPath("/");
-        cookie.setMaxAge(3600);
+        cookie.setMaxAge(JwtService.getValidityPeriod());
         cookie.setAttribute("SameSite", SameSiteCookies.STRICT.getValue());
         response.addCookie(cookie);
-        response.sendRedirect("/users");
+        response.sendRedirect("/transfert");
+    }
+
+    private void setDefaultAttributes(Model model) {
+        model.addAttribute("style", "/css/style.css");
+        model.addAttribute("title", "Connexion - PayMyBuddy");
+        model.addAttribute("contentTemplate", "pages/auth/login");
     }
 
     @PostMapping("/register")
@@ -46,10 +52,9 @@ public class AuthController {
 
     @GetMapping("/login")
     public String login(Model model) {
+        setDefaultAttributes(model);
         LoginForm loginForm = new LoginForm();
         model.addAttribute("loginForm", loginForm);
-        model.addAttribute("title", "Connexion - PayMyBuddy");
-        model.addAttribute("contentTemplate", "pages/auth/login");
         return "layout/base";
     }
 
@@ -60,8 +65,7 @@ public class AuthController {
                         HttpServletResponse response,
                         Model model) throws IOException {
 
-        model.addAttribute("title", "Connexion - PayMyBuddy");
-        model.addAttribute("contentTemplate", "pages/auth/login");
+        setDefaultAttributes(model);
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("loginForm", loginForm);

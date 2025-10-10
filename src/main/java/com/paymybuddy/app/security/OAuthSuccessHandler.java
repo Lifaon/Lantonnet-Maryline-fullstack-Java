@@ -67,6 +67,7 @@ public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
                     return;
             }
             userService.createUser(user);
+            user = userService.getByOAuth(provider, id).orElseThrow();
         }
 
         AuthController.createJWTCookie(response, jwtService.generateToken(user.toUserDetails()));

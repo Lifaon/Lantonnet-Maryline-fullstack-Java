@@ -7,6 +7,8 @@ import io.jsonwebtoken.Jwts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +26,10 @@ public class JwtService {
 
     private final SecretKey key;
 
-//    public JwtService() {
+    // How long should the token be valid, in seconds
+    private static final int validityPeriod = 60 * 60 * 24;
+
+    //    public JwtService() {
 //        try {
 //            KeyGenerator keyGen = KeyGenerator.getInstance("HmacSHA256");
 //            keyGen.init(256);
@@ -44,15 +49,26 @@ public class JwtService {
         log.debug("JWT key created from secret string");
     }
 
+    static public int getValidityPeriod() {
+        return validityPeriod;
+    }
+
+    static public Long getLoggedUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return Long.parseLong(authentication.getName()); // Returns the ID (not the username)
+    }
+
     public String generateToken(UserDetails userDetails) {
         log.debug("Generating JWT token");
+
         String token = Jwts.builder()
                 .subject(userDetails.getUsername())
                 .claim("role", UserRole.getHighest(userDetails.getAuthorities()))
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
+                .expiration(new Date(System.currentTimeMillis() + validityPeriod * 1000))
                 .signWith(key)
                 .compact();
+
         log.debug("JWT created: {}", token);
         return token;
     }
@@ -103,7 +119,8 @@ public class JwtService {
 
     public UserDetails getUserDetails(String token) {
         User user = new User();
-        user.setEmail(extractSubject(token));
+        String subject = extractSubject(token);
+        user.setId(Long.parseLong(subject));
         user.setRoles(extractRoles(token));
         return user.toUserDetails();
     }

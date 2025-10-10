@@ -1,9 +1,11 @@
 package com.paymybuddy.app;
 
+import com.paymybuddy.app.bankaccounts.BankAccount;
 import com.paymybuddy.app.user.User;
 import com.paymybuddy.app.user.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -18,8 +20,12 @@ public class App {
     }
 
     @Bean
-    public CommandLineRunner demo(UserService service) {
+    public CommandLineRunner demo(UserService service, @Value("${app.init-db}") boolean init_db) {
+
         return (args) -> {
+
+            if (!init_db) return;
+
             service.deleteAllUsers();
 
             service.createUser(new User("Jack", "Jack@gmail.com", "password"));
@@ -64,12 +70,12 @@ public class App {
             log.info(user.toString());
             log.info(user2.toString());
 
-            service.deleteUser(user2.getId());
+//            service.deleteUser(user2.getId());
             log.info("");
 
             user = service.getUserByUsername("Chloe");
 
-            user.createBankAccount("iban1", 500.);
+            user.getBankAccount().setBalance(500.);
             service.updateUser(user);
         };
     }
