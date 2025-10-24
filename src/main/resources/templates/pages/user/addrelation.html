@@ -1,0 +1,28 @@
+
+<!--    Add Header -->
+
+<div xmlns:th="http://www.thymeleaf.org" th:fragment="content">
+    <div class="row">
+        <div>
+            Ajouter une relation
+        </div>
+        <form th:action="@{/user/addrelation}" method="post">
+            <div class="inputs">
+                <div class="input">
+                    <input th:value="${relationEmail}" name="relationEmail" aria-label="email" type="email" placeholder="Saisir une adresse email"/>
+                </div>
+                <!--/*@thymesVar id="errorMessage" type="java.lang.String"*/-->
+                <div th:if="${errorMessage != null}">
+                    <div th:text="${errorMessage}" class="error"></div>
+                </div>
+                <div>
+                    <button type="submit" class="button">Ajouter</button>
+                </div>
+            </div>
+        </form>
+        <!--/*@thymesVar id="successMessage" type="java.lang.String"*/-->
+        <div th:if="${successMessage != null}">
+            <div th:text="${successMessage}" class="success"></div>
+        </div>
+    </div>
+</div>

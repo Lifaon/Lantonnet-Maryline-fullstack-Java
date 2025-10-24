@@ -51,7 +51,7 @@ public class TransactionService {
 
         Transaction transaction = new Transaction();
         transaction.setAmountSent(form.getAmount());
-        transaction.setAmountReceived(Math.round(form.getAmount() * 95.) / 100.);
+        transaction.setAmountReceived(Math.round(form.getAmount() * 99.5) / 100.);
         transaction.setDescription(form.getDescription());
         transaction.setDate(new Date());
 

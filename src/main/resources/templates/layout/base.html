@@ -7,7 +7,13 @@
     <title th:text="${title}">Pay My Buddy</title>
 </head>
 <body>
-
+<ul class="navbar">
+    <li class="first-li">Pay My Buddy</li>
+    <li><a th:classappend="${navId == 1 ? 'nav-current' : ''}" href="/transfert">Transférer</a></li>
+    <li><a th:classappend="${navId == 2 ? 'nav-current' : ''}" href="/user/profile">Profil</a></li>
+    <li><a th:classappend="${navId == 3 ? 'nav-current' : ''}" href="/user/addrelation">Ajouter une relation</a></li>
+    <li><form action="/auth/logout" method="post"><button type="submit">Se déconnecter</button></form></li>
+</ul>
 <main>
     <div class="flex-box">
         <div th:replace="~{${contentTemplate} :: content}">

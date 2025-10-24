@@ -2,6 +2,8 @@ package com.paymybuddy.app.user;
 
 import com.paymybuddy.app.bankaccounts.BankAccount;
 import com.paymybuddy.app.security.JwtService;
+import com.paymybuddy.app.security.LoginForm;
+import com.paymybuddy.app.security.SignUpForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -21,6 +23,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -36,6 +39,7 @@ public class UserService implements UserDetailsService {
     private final JwtService jwtService;
 
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
+    private final Pattern BCRYPT_PATTERN = Pattern.compile("\\A\\$2a?\\$\\d\\d\\$[./0-9A-Za-z]{53}");
 
     public UserService(UserRepository repo, UserRelationRepository relationRepo, ApplicationContext context, JwtService jwtService) {
         this.repo = repo;
@@ -59,10 +63,10 @@ public class UserService implements UserDetailsService {
 
     }
 
-    public String verify(UserDetails userDetails) {
+    public String verify(LoginForm form) {
         Authentication authentication = context.getBean(AuthenticationManager.class).authenticate(
-                new UsernamePasswordAuthenticationToken(userDetails.getUsername(), userDetails.getPassword()));
-        // Generate new details from logged user, to specify the id instead of the username
+                new UsernamePasswordAuthenticationToken(form.getEmail(), form.getPassword()));
+        // Generate new details from logged user, to specify the id instead of the email
         long id;
         try {
             id = Long.parseLong(authentication.getName());
@@ -100,6 +104,13 @@ public class UserService implements UserDetailsService {
         return relationRepo.findAllByUserId(JwtService.getLoggedUserId());
     }
 
+    public void addRelationToLoggedUser(String email) {
+        User user = getLoggedUser();
+        User contact = getUserByEmail(email);
+        user.getRelations().add(new UserRelation(user, contact));
+        repo.save(user);
+    }
+
     public void createUser(User user) {
         if (user.getPassword() != null) {
             user.setPassword(encoder.encode(user.getPassword()));
@@ -111,35 +122,23 @@ public class UserService implements UserDetailsService {
         log.debug("User {} created", user.getId());
     }
 
+    public void createUser(SignUpForm form) {
+        createUser(new User(form.getUsername(), form.getEmail(), form.getPassword()));
+    }
+
     public void updateUser(User user) {
         if (!repo.existsById(user.getId())) {
             throw new UserNotFound();
+        }
+
+        // Encode password if it's not already encoded
+        String password = user.getPassword();
+        if (password != null && !BCRYPT_PATTERN.matcher(password).matches()) {
+            user.setPassword(encoder.encode(password));
         }
         repo.save(user);
         log.debug("User {} updated", user.getId());
     }
 
-    @Transactional
-    public void deleteUser(Long id) {
-        User user = repo.findById(id).orElseThrow(UserNotFound::new);
-
-        user.getRelations().clear();
-        repo.save(user);
-
-        List<UserRelation> relations = relationRepo.findAllByContact(user);
-        relations.stream().map(UserRelation::getUser).forEach(owner -> owner.deleteRelation(user));
-        relationRepo.deleteAll(relations);
-
-        repo.delete(user);
-        log.debug("User {} deleted", user.getId());
-    }
-
-    @Transactional
-    public void deleteAllUsers() {
-        List<User> users = repo.findAll();
-        users.forEach(user -> user.getRelations().clear());
-        repo.saveAll(users);
-        repo.deleteAll();
-        log.debug("All users deleted");
-    }
+    // TODO: delete user ?
 }

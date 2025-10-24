@@ -2,10 +2,15 @@
     <div>
         <button id='home_button' class="button">Pay My Buddy</button>
     </div>
-    <!--/*@thymesVar id="loginForm" type="com.paymybuddy.app.security.LoginForm"*/-->
+    <!--/*@thymesVar id="signUpForm" type="com.paymybuddy.app.security.SignUpForm"*/-->
     <!--/*@thymesVar id="error" type="java.lang.String"*/-->
-    <form th:action="@{/auth/login}" th:object="${loginForm}" method="post">
+    <form th:action="@{/auth/register}" th:object="${signUpForm}" method="post">
         <div class="inputs">
+            <div class="input">
+                <input th:field="*{username}" aria-label="username" type="text" placeholder="Nom d'utilisateur"/>
+                <div th:if="${#fields.hasErrors('*{username}')}" th:errors="*{username}" class="error"></div>
+            </div>
+
             <div class="input">
                 <input th:field="*{email}" aria-label="email" type="email" placeholder="Mail"/>
                 <div th:if="${#fields.hasErrors('*{email}')}" th:errors="*{email}" class="error"></div>
@@ -19,10 +24,10 @@
             <div th:if="${error != null}" class="error" th:text="${error}"></div>
         </div>
         <div>
-            <button type="submit" class="button">Se connecter</button>
+            <button type="submit" class="button">S'inscrire</button>
         </div>
         <div>
-            <a class="button" href="register">S'inscrire ?</a>
+            <a class="button" href="login">Se connecter ?</a>
         </div>
     </form>
     <div class="oauth">

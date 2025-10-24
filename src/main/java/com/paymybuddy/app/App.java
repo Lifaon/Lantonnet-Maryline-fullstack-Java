@@ -26,8 +26,6 @@ public class App {
 
             if (!init_db) return;
 
-            service.deleteAllUsers();
-
             service.createUser(new User("Jack", "Jack@gmail.com", "password"));
             service.createUser(new User("Chloe", "Chloe@gmail.com", "password"));
             service.createUser(new User("Kim", "Kim@gmail.com", "password"));
@@ -70,7 +68,6 @@ public class App {
             log.info(user.toString());
             log.info(user2.toString());
 
-//            service.deleteUser(user2.getId());
             log.info("");
 
             user = service.getUserByUsername("Chloe");

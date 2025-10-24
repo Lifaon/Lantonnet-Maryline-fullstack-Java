@@ -32,6 +32,7 @@ public class TransactionController {
         model.addAttribute("style", "/css/style.css");
         model.addAttribute("title", "Transferts - PayMyBuddy");
         model.addAttribute("contentTemplate", "pages/transfert.html");
+        model.addAttribute("navId", 1);
 
         List<String> relations = userService.getLoggedUserRelations().stream()
                 .map(UserRelation::getContact)

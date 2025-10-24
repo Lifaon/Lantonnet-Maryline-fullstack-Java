@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link th:href="@{${style}}" rel="stylesheet">
+    <title th:text="${title}">Pay My Buddy</title>
+</head>
+<body>
+<main>
+    <div class="flex-box">
+        <div th:replace="~{${contentTemplate} :: content}">
+            <p>Contenu par défaut</p>
+        </div>
+    </div>
+</main>
+
+</body>
+</html>

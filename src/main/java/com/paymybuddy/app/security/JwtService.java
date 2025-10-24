@@ -58,6 +58,16 @@ public class JwtService {
         return Long.parseLong(authentication.getName()); // Returns the ID (not the username)
     }
 
+    static public boolean isLoggedIn() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication != null && authentication.isAuthenticated();
+    }
+
+    static public void logOut() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        authentication.setAuthenticated(false);
+    }
+
     public String generateToken(UserDetails userDetails) {
         log.debug("Generating JWT token");
 
