@@ -3,7 +3,6 @@ package com.paymybuddy.app.transaction;
 import com.paymybuddy.app.bankaccounts.BankAccount;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -22,11 +21,11 @@ public class Transaction {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "sender_id", foreignKey = @ForeignKey(name = "FK_TRANSACTION_SENDER"))
+    @JoinColumn(name = "sender_id")
     private BankAccount sender;
 
     @ManyToOne
-    @JoinColumn(name = "receiver_id", foreignKey = @ForeignKey(name = "FK_TRANSACTION_RECEIVER"))
+    @JoinColumn(name = "receiver_id")
     private BankAccount receiver;
 
     private Double amountSent;

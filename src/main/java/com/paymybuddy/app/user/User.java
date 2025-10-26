@@ -25,8 +25,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Entity(name = "user")
-@Table(name = "user")
+@Entity(name = "user_list")
+@Table(name = "user_list")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

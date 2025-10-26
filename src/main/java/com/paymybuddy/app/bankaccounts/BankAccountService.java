@@ -31,14 +31,13 @@ public class BankAccountService {
     public void saveTransaction(Transaction transaction) {
         BankAccount sender = transaction.getSender(),
                     receiver = transaction.getReceiver();
-        Double amount = transaction.getAmountSent();
 
-        if (sender.getBalance() < amount) {
+        if (sender.getBalance() < transaction.getAmountSent()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Montant saisi supérieur à la balance du compte");
         }
 
-        sender.setBalance(sender.getBalance() - amount);
-        receiver.setBalance(receiver.getBalance() + amount);
+        sender.setBalance(sender.getBalance() - transaction.getAmountSent());
+        receiver.setBalance(receiver.getBalance() + transaction.getAmountReceived());
 
         repo.saveAll(List.of(sender, receiver));
     }

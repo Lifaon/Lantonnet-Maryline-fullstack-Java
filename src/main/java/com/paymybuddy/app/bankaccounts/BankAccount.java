@@ -4,7 +4,6 @@ import com.paymybuddy.app.transaction.Transaction;
 import com.paymybuddy.app.user.User;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -24,7 +23,7 @@ public class BankAccount {
     private Long id;
 
     @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_BANK_ACCOUNT_USER"))
+    @JoinColumn(name = "user_id")
     private User user;
 
     private Double balance;
