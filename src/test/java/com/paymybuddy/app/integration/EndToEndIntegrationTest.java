@@ -62,7 +62,7 @@ class EndToEndIntegrationTest {
         assertNotNull(aliceToken);
 
         // Vérifier que le compte bancaire a été créé
-        User alice = userRepository.findByEmail("alice@example.com").orElseThrow();
+        User alice = userRepository.findFirstByEmail("alice@example.com").orElseThrow();
         assertNotNull(alice.getBankAccount());
         assertEquals(0.0, alice.getBankAccount().getBalance(), 0.01);
 
@@ -89,7 +89,7 @@ class EndToEndIntegrationTest {
                 .andExpect(redirectedUrl("/user/addrelation?success=1"));
 
         // Vérifier que la relation a été créée
-        alice = userRepository.findByEmail("alice@example.com").orElseThrow();
+        alice = userRepository.findFirstByEmail("alice@example.com").orElseThrow();
         assertEquals(1, alice.getRelations().size());
 
         // 5. Alice consulte la page de transfert
@@ -109,8 +109,8 @@ class EndToEndIntegrationTest {
                 .andExpect(redirectedUrl("/transfert?success=1"));
 
         // 7. Vérifier les balances après la transaction
-        alice = userRepository.findByEmail("alice@example.com").orElseThrow();
-        User bob = userRepository.findByEmail("bob@example.com").orElseThrow();
+        alice = userRepository.findFirstByEmail("alice@example.com").orElseThrow();
+        User bob = userRepository.findFirstByEmail("bob@example.com").orElseThrow();
 
         assertEquals(450.0, alice.getBankAccount().getBalance(), 0.01);
         assertEquals(49.75, bob.getBankAccount().getBalance(), 0.01); // 50 * 0.995
@@ -132,7 +132,7 @@ class EndToEndIntegrationTest {
                         .param("password", "newpassword123"))
                 .andExpect(status().is3xxRedirection());
 
-        alice = userRepository.findByEmail("alice@example.com").orElseThrow();
+        alice = userRepository.findFirstByEmail("alice@example.com").orElseThrow();
         assertEquals("alice_updated", alice.getUsername());
 
         // 10. Alice se déconnecte
@@ -166,7 +166,7 @@ class EndToEndIntegrationTest {
             tokens[i] = result.getResponse().getCookie("authToken");
 
             // Ajouter de l'argent
-            User user = userRepository.findByEmail(users[i]).orElseThrow();
+            User user = userRepository.findFirstByEmail(users[i]).orElseThrow();
             user.getBankAccount().setBalance(1000.0);
             userRepository.save(user);
         }
@@ -199,9 +199,9 @@ class EndToEndIntegrationTest {
                 .andExpect(status().is3xxRedirection());
 
         // Vérifier les balances
-        User user1 = userRepository.findByEmail(users[0]).orElseThrow();
-        User user2 = userRepository.findByEmail(users[1]).orElseThrow();
-        User user3 = userRepository.findByEmail(users[2]).orElseThrow();
+        User user1 = userRepository.findFirstByEmail(users[0]).orElseThrow();
+        User user2 = userRepository.findFirstByEmail(users[1]).orElseThrow();
+        User user3 = userRepository.findFirstByEmail(users[2]).orElseThrow();
 
         assertEquals(750.0, user1.getBankAccount().getBalance(), 0.01);
         assertEquals(1099.5, user2.getBankAccount().getBalance(), 0.01);
@@ -248,7 +248,7 @@ class EndToEndIntegrationTest {
                 .andExpect(model().attributeExists("errorMessage"));
 
         // 5. Tentative de transaction avec fonds insuffisants
-        User user = userRepository.findByEmail("test@example.com").orElseThrow();
+        User user = userRepository.findFirstByEmail("test@example.com").orElseThrow();
         user.getBankAccount().setBalance(10.0);
         userRepository.save(user);
 
@@ -274,7 +274,7 @@ class EndToEndIntegrationTest {
                 .andExpect(model().attributeExists("errorMessage"));
 
         // La balance ne devrait pas avoir changé
-        user = userRepository.findByEmail("test@example.com").orElseThrow();
+        user = userRepository.findFirstByEmail("test@example.com").orElseThrow();
         assertEquals(10.0, user.getBankAccount().getBalance(), 0.01);
     }
 
@@ -295,7 +295,7 @@ class EndToEndIntegrationTest {
                 .andReturn();
 
         // Ajouter de l'argent
-        User user1 = userRepository.findByEmail("user1@test.com").orElseThrow();
+        User user1 = userRepository.findFirstByEmail("user1@test.com").orElseThrow();
         user1.getBankAccount().setBalance(100.0);
         userRepository.save(user1);
 
@@ -315,8 +315,8 @@ class EndToEndIntegrationTest {
         }
 
         // Vérifier que toutes les transactions ont été traitées correctement
-        user1 = userRepository.findByEmail("user1@test.com").orElseThrow();
-        User user2 = userRepository.findByEmail("user2@test.com").orElseThrow();
+        user1 = userRepository.findFirstByEmail("user1@test.com").orElseThrow();
+        User user2 = userRepository.findFirstByEmail("user2@test.com").orElseThrow();
 
         // Certaines transactions peuvent avoir échoué pour fonds insuffisants
         assertTrue(user1.getBankAccount().getBalance() >= 0);

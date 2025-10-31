@@ -99,7 +99,7 @@ class AuthenticationIntegrationTest {
                 .andExpect(cookie().exists("authToken"));
 
         // Vérifier que l'utilisateur est bien créé
-        assert userRepository.findByEmail("newuser@example.com").isPresent();
+        assert userRepository.findFirstByEmail("newuser@example.com").isPresent();
     }
 
     @Test

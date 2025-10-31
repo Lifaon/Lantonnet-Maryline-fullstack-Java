@@ -33,7 +33,7 @@ public class User {
     @Column(unique = true, nullable = false)
     private Long id;
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String email;
 
     @Column(nullable = false)

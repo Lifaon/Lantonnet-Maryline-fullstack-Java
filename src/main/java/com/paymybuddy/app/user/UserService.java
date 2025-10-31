@@ -78,9 +78,10 @@ public class UserService implements UserDetailsService {
         return jwtService.generateToken(user.toUserDetails());
     }
 
+    // Used to log in, so provider will always be local.
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return getUserByEmail(email).toUserDetails();
+        return repo.findByEmailAndProvider(email, "local").orElseThrow().toUserDetails();
     }
 
     public User getUserById(Long id) {
@@ -88,11 +89,11 @@ public class UserService implements UserDetailsService {
     }
 
     public User getUserByUsername(String username) {
-        return repo.findByUsername(username).orElseThrow(UserNotFound::new);
+        return repo.findFirstByUsername(username).orElseThrow(UserNotFound::new);
     }
 
     public User getUserByEmail(String email) {
-        return repo.findByEmail(email).orElseThrow(UserNotFound::new);
+        return repo.findFirstByEmail(email).orElseThrow(UserNotFound::new);
     }
 
     public User getLoggedUser() {
@@ -111,7 +112,7 @@ public class UserService implements UserDetailsService {
         repo.save(user);
     }
 
-    public void createUser(User user) {
+    public User createUser(User user) {
         if (user.getPassword() != null) {
             user.setPassword(encoder.encode(user.getPassword()));
         }
@@ -120,10 +121,11 @@ public class UserService implements UserDetailsService {
         }
         repo.save(user);
         log.debug("User {} created", user.getId());
+        return user;
     }
 
-    public void createUser(SignUpForm form) {
-        createUser(new User(form.getUsername(), form.getEmail(), form.getPassword()));
+    public User createUser(SignUpForm form) {
+        return createUser(new User(form.getUsername(), form.getEmail(), form.getPassword()));
     }
 
     public void updateUser(User user) {

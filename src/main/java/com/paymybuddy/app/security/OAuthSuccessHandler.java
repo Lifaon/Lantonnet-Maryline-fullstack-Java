@@ -70,8 +70,7 @@ public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
                     log.warn("Unknown provider: {}", provider);
                     return;
             }
-            userService.createUser(user);
-            user = userService.getByOAuth(provider, id).orElseThrow();
+            user = userService.createUser(user);
         }
 
         AuthController.createJWTCookie(response, jwtService.generateToken(user.toUserDetails()));
